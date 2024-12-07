@@ -1,4 +1,4 @@
-const API_URL = "https://your-backend-domain.com/requests"; // Replace with your deployed backend URL
+const API_URL = "https://live2-1.onrender.com/requests"; // Replace with your deployed backend URL
 
 document.getElementById("liveRequestBtn").addEventListener("click", () => {
   document.getElementById("liveRequestBtn").classList.add("hidden");
