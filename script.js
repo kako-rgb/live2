@@ -1,4 +1,4 @@
-const API_URL = "https://your-backend-domain.com/requests";
+const API_URL = "https://cloud.mongodb.com/";
 
 document.getElementById("liveRequestBtn").addEventListener("click", () => {
   document.getElementById("liveRequestBtn").classList.add("hidden");
