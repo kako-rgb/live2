@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors({ origin: "https://melodious-gelato-05ef17.netlify.app" })); // Allow frontend
+app.use(cors({ origin: "https://live-request-test.netlify.app/" })); // Allow frontend
 app.use(express.json());
 
 // MongoDB Connection
