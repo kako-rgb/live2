@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors({ origin: "https://live-request-test.netlify.app/" })); // Allow frontend
+app.use(cors({ origin: "https://live-request-test.netlify.app" })); // Allow frontend
 app.use(express.json());
 
 // MongoDB Connection
@@ -27,7 +27,7 @@ const Request = mongoose.model("Request", requestSchema);
 // Routes
 app.get("/requests", async (req, res) => {
   try {
-    const requests = await Request.find();
+    const requests = await Request.find().sort({ _id: -1 }); // Fetch latest requests first
     res.json(requests);
   } catch (error) {
     res.status(500).json({ error: "Error fetching requests" });

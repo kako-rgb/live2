@@ -1,4 +1,4 @@
-const API_URL = "https://cloud.mongodb.com/";
+const API_URL = "https://your-backend-domain.com/requests"; // Replace with your deployed backend URL
 
 document.getElementById("liveRequestBtn").addEventListener("click", () => {
   document.getElementById("liveRequestBtn").classList.add("hidden");
@@ -13,14 +13,15 @@ const duplicateMessage = document.getElementById("duplicateMessage");
 async function fetchRequests() {
   try {
     const response = await fetch(API_URL);
+    if (!response.ok) throw new Error("Failed to fetch requests");
     const requests = await response.json();
 
     requestsDisplay.innerHTML = ""; // Clear current display
-    requests.forEach(({ id, name, request }) => {
+    requests.forEach(({ _id, name, request }) => {
       const requestItem = document.createElement("div");
       requestItem.className = "request-item";
       requestItem.innerHTML = `
-        <span>${id}. ${name || "User"}</span>
+        <span>${_id.substring(0, 5)}. ${name || "User"}</span>
         ${request}
       `;
       requestsDisplay.appendChild(requestItem);
@@ -41,6 +42,7 @@ requestForm.addEventListener("submit", async (e) => {
   try {
     // Check for duplicates
     const response = await fetch(API_URL);
+    if (!response.ok) throw new Error("Failed to fetch requests");
     const requests = await response.json();
     const duplicate = requests.some((req) => req.request.toLowerCase() === musicRequest.toLowerCase());
 
