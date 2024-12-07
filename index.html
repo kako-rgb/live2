@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Music Requests</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <button id="liveRequestBtn">Live Request</button>
+    <div id="requestBox" class="hidden">
+      <div id="requestsDisplay" class="requests-display"></div>
+      <form id="requestForm">
+        <input type="text" id="musicRequest" maxlength="25" placeholder="Enter music request" required>
+        <input type="text" id="userName" placeholder="Enter your name (optional)">
+        <button type="submit">Post</button>
+      </form>
+      <div id="duplicateMessage" class="hidden">This song has already been requested!</div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
