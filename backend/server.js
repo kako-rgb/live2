@@ -2,15 +2,37 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
 //updated cors code
+const app = express();
+app.use(express.json());
+app.use(cors());
 
+const requests = []; // Temporary in-memory storage
 
+// Root route
+app.get("/", (req, res) => {
+  res.send("Welcome to the Live Music Request API");
+});
 
+// Fetch all requests
+app.get("/requests", (req, res) => {
+  res.json(requests);
+});
 
+// Add a new request
+app.post("/requests", (req, res) => {
+  const { name, request } = req.body;
+  if (!request) return res.status(400).json({ error: "Request is required" });
+
+  const newRequest = { _id: Date.now().toString(), name, request };
+  requests.push(newRequest);
+  res.status(201).json(newRequest);
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 // Middleware
 const allowedOrigins = ["https://live-request-test.netlify.app",
   "http://127.0.0.1:5500",// Local frontend for testing
