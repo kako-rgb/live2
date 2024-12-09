@@ -8,6 +8,11 @@ app.use(express.json());
 app.use(cors());
 
 const requests = []; // Temporary in-memory storage
+//dynamic port
+const PORTS = process.env.PORT || 10000; // Use the PORT environment variable or default to 10000
+app.listen(PORTS, () => {
+  console.log(`Server running on port ${PORTS}`);
+});
 
 // Root route
 app.get("/", (req, res) => {
