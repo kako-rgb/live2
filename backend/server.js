@@ -6,8 +6,24 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+//updated cors code
+
+
+
+
 // Middleware
-app.use(cors({ origin: "https://live-request-test.netlify.app" })); // Allow frontend
+const allowedOrigins = ["https://live-request-test.netlify.app",
+  "http://127.0.0.1:5500",// Local frontend for testing
+];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+}));
 app.use(express.json());
 
 // MongoDB Connection
@@ -25,9 +41,13 @@ const requestSchema = new mongoose.Schema({
 const Request = mongoose.model("Request", requestSchema);
 
 // Routes
+app.get("/", (req, res) => {
+  res.send("Welcome to the Live Music Request API");
+});
+
 app.get("/requests", async (req, res) => {
   try {
-    const requests = await Request.find().sort({ _id: -1 }); // Fetch latest requests first
+    const requests = await Request.find();
     res.json(requests);
   } catch (error) {
     res.status(500).json({ error: "Error fetching requests" });

@@ -8,6 +8,10 @@ document.getElementById("liveRequestBtn").addEventListener("click", () => {
 const requestForm = document.getElementById("requestForm");
 const requestsDisplay = document.getElementById("requestsDisplay");
 const duplicateMessage = document.getElementById("duplicateMessage");
+// update welcome
+app.get("/", (req, res) => {
+  res.send("Welcome to the Live Music Request API");
+});
 
 // Fetch and display existing requests
 async function fetchRequests() {
