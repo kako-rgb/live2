@@ -2,48 +2,17 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
-//updated cors code
+
 const app = express();
-app.use(express.json());
-app.use(cors());
 
-const requests = []; // Temporary in-memory storage
-//dynamic port
-const PORTS = process.env.PORT || 10000; // Use the PORT environment variable or default to 10000
-app.listen(PORTS, () => {
-  console.log(`Server running on port ${PORTS}`);
-});
-
-// Root route
-app.get("/", (req, res) => {
-  res.send("Welcome to the Live Music Request API");
-});
-
-// Fetch all requests
-app.get("/requests", (req, res) => {
-  res.json(requests);
-});
-
-// Add a new request
-app.post("/requests", (req, res) => {
-  const { name, request } = req.body;
-  if (!request) return res.status(400).json({ error: "Request is required" });
-
-  const newRequest = { _id: Date.now().toString(), name, request };
-  requests.push(newRequest);
-  res.status(201).json(newRequest);
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 // Middleware
-const allowedOrigins = ["https://live-request-test.netlify.app",
-  "http://127.0.0.1:5500",// Local frontend for testing
-];
+app.use(express.json());
 app.use(cors({
   origin: (origin, callback) => {
+    const allowedOrigins = [
+      "https://live-request-test.netlify.app", // Production frontend
+      "http://127.0.0.1:5500", // Local frontend for testing
+    ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -51,7 +20,6 @@ app.use(cors({
     }
   },
 }));
-app.use(express.json());
 
 // MongoDB Connection
 mongoose
@@ -72,6 +40,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Live Music Request API");
 });
 
+// Fetch all requests
 app.get("/requests", async (req, res) => {
   try {
     const requests = await Request.find();
@@ -81,16 +50,22 @@ app.get("/requests", async (req, res) => {
   }
 });
 
+// Add a new request
 app.post("/requests", async (req, res) => {
   const { name, request } = req.body;
+  if (!request) return res.status(400).json({ error: "Request is required" });
+
   try {
     const newRequest = new Request({ name, request });
     await newRequest.save();
-    res.status(201).json({ message: "Request added successfully" });
+    res.status(201).json({ message: "Request added successfully", data: newRequest });
   } catch (error) {
     res.status(500).json({ error: "Error adding request" });
   }
 });
 
-// Start Server
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// Dynamic Port
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
