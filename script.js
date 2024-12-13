@@ -1,4 +1,4 @@
-const API_URL = "https://live2-1.onrender.com/requests"; // Replace with your deployed backend URL
+const API_URL = "https://nodayz.onrender.com/requests"; // Replace with your deployed backend URL
 
 // DOM Elements
 const liveRequestBtn = document.getElementById("liveRequestBtn");
