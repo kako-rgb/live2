@@ -3123,34 +3123,6 @@ setInterval(fetchRequests, 60000);
   displayItems();
   
   
-  function openGenre(genre) {
-    const genreContent = document.getElementById("genre-content");
-    const genresSection = document.getElementById("genres-section");
-  
-    // Add current state to history
-    genreHistory.push(genresSection.style.display === "none" ? "genre-content" : "genres-section");
-  
-    // Show genre content, hide genres list
-    genresSection.style.display = "none";
-    genreContent.style.display = "block";
-  
-    // Update genre title
-    const genreTitle = document.getElementById("genre-title");
-    genreTitle.textContent = genre;
-  }
- 
-    // Navigate to the last screen
-    const lastScreen = genreHistory.pop();
-    if (lastScreen === "genres-section") {
-      genresSection.style.display = "block";
-      genreContent.style.display = "none";
-    } else if (lastScreen === "genre-content") {
-      genreContent.style.display = "block";
-      genresSection.style.display = "none";
-    }
-  });
-  
-  
   // Open a genre and display its content
   function openGenre(genre) {
     const genreContent = document.getElementById('genre-content');
