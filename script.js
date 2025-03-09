@@ -3138,10 +3138,7 @@ setInterval(fetchRequests, 60000);
     const genreTitle = document.getElementById("genre-title");
     genreTitle.textContent = genre;
   }
-  returnBtn.addEventListener("click", () => {
-    const genreContent = document.getElementById("genre-content");
-    const genresSection = document.getElementById("genres-section");
-  
+ 
     // Navigate to the last screen
     const lastScreen = genreHistory.pop();
     if (lastScreen === "genres-section") {
