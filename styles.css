@@ -609,7 +609,10 @@ button:active {
     border: none;
     cursor: pointer;
   }
-
+  #requestsDisplay{
+    text-align: left;
+    color: #39FF14;
+  }
 /***********************************************END**********************/
 /* Main Container */
 .container {
