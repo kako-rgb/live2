@@ -951,23 +951,7 @@ function closePlayer() {
 
   // Select the elements
   const API_URL = "https://nodayz.onrender.com/requests";
-  const kcont = document.getElementById('kcont');
-  const ncont = document.getElementById('ncont');
-  const backbtn = document.getElementById('back-btn');
-  const backbtn2 = document.getElementById('back-btn2');
-  const mixcont = document.getElementById('mixcont');
-  const liveRequestBtn = document.getElementById('liveRequestBtn');
-  const qr = document.getElementById('qr');
-  const genresSection = document.getElementById('genres-section');
-  const kvidz = document.getElementById('videoButton');
-  const kvidz2 = document.getElementById('kvidz2');
-  const searchbar = document.getElementById('search-input');
-  const container1 = document.getElementById('container1');
-  const requestForm = document.getElementById("requestForm");
-  const requestBox = document.getElementById("requestBox");
-  const requestsDisplay = document.getElementById("requestsDisplay");
-  const duplicateMessage = document.getElementById("duplicateMessage");
-  
+
   
 // Show request form when button is clicked
 liveRequestBtn.addEventListener("click", () => {
