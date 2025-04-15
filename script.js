@@ -34,7 +34,7 @@ const products = [
     {
         id: '1',
         name: 'Wireless Earbuds',
-        price: 19.99,
+        price: 2499.99,
         sales: 100,
         image: 'img/earbuds.jpg',
         description: 'High quality wireless earbuds with noise cancellation',
@@ -48,7 +48,7 @@ const products = [
     {
         id: '2',
         name: 'Smart Watch',
-        price: 29.99,
+        price: 3499.99,
         sales: 50,
         image: 'img/smartwatch.jpeg',
         description: 'Feature-rich smart watch with health tracking',
@@ -62,7 +62,7 @@ const products = [
     {
         id: '3',
         name: 'Smart TV',
-        price: 29.99,
+        price: 24999.99,
         sales: 50,
         image: 'img/tv.jpg',
         description: 'Feature-rich smart TV with clear pictures',
@@ -76,7 +76,7 @@ const products = [
     {
         id: '4',
         name: 'Samsung HIFI',
-        price: 129.99,
+        price: 12999.99,
         sales: 50,
         image: 'img/sound.jpg',
         description: 'great sound experience',
@@ -90,7 +90,7 @@ const products = [
     {
         id: '5',
         name: 'Samsung Fridge',
-        price: 129.99,
+        price: 39999.99,
         sales: 50,
         image: 'img/fridge.jpeg',
         description: 'Freezing everyday',
@@ -122,7 +122,7 @@ window.showProductDetails = function(productId) {
             </div>
             <div class="product-info">
                 <h2>${product.name}</h2>
-                <div class="product-price">$${product.price}</div>
+                <div class="product-price">KES ${product.price.toFixed(2)}</div>
                 <div class="product-sales">${product.sales}+ sold</div>
                 <p class="product-description">${product.description}</p>
                 <button class="add-to-cart" onclick="addToCart('${productId}')">Add to Cart</button>
@@ -296,7 +296,7 @@ window.showCart = function() {
                             <span>${item.name}</span>
                         </div>
                     </td>
-                    <td>$${item.price.toFixed(2)}</td>
+                    <td>KES ${item.price.toFixed(2)}</td>
                     <td>
                         <div class="quantity-control">
                             <button onclick="updateCartItemQuantity('${item.id}', ${item.quantity - 1})">-</button>
@@ -304,7 +304,7 @@ window.showCart = function() {
                             <button onclick="updateCartItemQuantity('${item.id}', ${item.quantity + 1})">+</button>
                         </div>
                     </td>
-                    <td>$${itemTotal.toFixed(2)}</td>
+                    <td>KES ${itemTotal.toFixed(2)}</td>
                     <td>
                         <button onclick="removeFromCart('${item.id}')">Remove</button>
                     </td>
@@ -316,7 +316,7 @@ window.showCart = function() {
                 </tbody>
             </table>
             <div class="cart-total">
-                <span>Total: $${total.toFixed(2)}</span>
+                <span>Total: KES ${total.toFixed(2)}</span>
             </div>
             <div class="cart-actions">
                 <button onclick="clearCart()">Clear Cart</button>
@@ -417,7 +417,7 @@ window.checkout = function() {
 
             <div class="checkout-summary">
                 <h3>Order Summary</h3>
-                <p>${cart.length} item(s) - Total: $${total.toFixed(2)}</p>
+                <p>${cart.length} item(s) - Total: KES ${total.toFixed(2)}</p>
             </div>
 
             <div class="checkout-form">
@@ -591,16 +591,60 @@ updateCartCount();
 initializeProductImageRotators();
 
 // Search functionality
+const quickResults = document.getElementById('quick-results');
+
+// Show random products when search is clicked
+searchInput.addEventListener('click', () => {
+    // Show quick results with 4 random products
+    showRandomProducts();
+});
+
+// Function to show random products
+function showRandomProducts() {
+    // Get 4 random products
+    const randomProducts = getRandomProducts(4);
+
+    // Display them in quick results
+    let resultsHTML = '';
+    randomProducts.forEach(product => {
+        resultsHTML += `
+            <div class="search-item" onclick="showProductDetails('${product.id}')">
+                <img src="${product.image}" alt="${product.name}">
+                <div class="search-item-details">
+                    <div class="search-item-name">${product.name}</div>
+                    <div class="search-item-price">KES ${product.price.toFixed(2)}</div>
+                    <div class="search-item-description">${product.description || 'No description available'}</div>
+                </div>
+            </div>
+        `;
+    });
+
+    quickResults.innerHTML = resultsHTML;
+    quickResults.style.display = 'block';
+}
+
+// Get random products
+function getRandomProducts(count) {
+    const shuffled = [...products].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+}
+
+// Search input functionality
 searchInput.addEventListener('input', () => {
     const query = searchInput.value.toLowerCase().trim();
 
+    // Hide quick results when typing
+    quickResults.style.display = 'none';
+
     if (query.length < 2) {
         searchResults.innerHTML = '';
+        searchResults.style.display = 'none';
         return;
     }
 
     const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(query)
+        product.name.toLowerCase().includes(query) ||
+        (product.description && product.description.toLowerCase().includes(query))
     );
 
     if (filteredProducts.length === 0) {
@@ -610,20 +654,26 @@ searchInput.addEventListener('input', () => {
         filteredProducts.forEach(product => {
             resultsHTML += `
                 <div class="search-item" onclick="showProductDetails('${product.id}')">
-                    <img src="${product.image}" alt="${product.name}" width="30">
-                    <span>${product.name}</span>
-                    <span>$${product.price}</span>
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="search-item-details">
+                        <div class="search-item-name">${product.name}</div>
+                        <div class="search-item-price">KES ${product.price.toFixed(2)}</div>
+                        <div class="search-item-description">${product.description || 'No description available'}</div>
+                    </div>
                 </div>
             `;
         });
         searchResults.innerHTML = resultsHTML;
     }
+
+    searchResults.style.display = 'block';
 });
 
 // Hide search results when clicking outside
 document.addEventListener('click', (e) => {
-    if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-        searchResults.innerHTML = '';
+    if (!searchInput.contains(e.target) && !searchResults.contains(e.target) && !quickResults.contains(e.target)) {
+        searchResults.style.display = 'none';
+        quickResults.style.display = 'none';
     }
 });
 

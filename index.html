@@ -13,16 +13,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <!-- Search Bar - Sticky at top -->
+    <div class="search-container sticky">
+        <input type="text" id="search-input" placeholder="Search products...">
+        <div id="search-results">
+            <!-- Random products will appear here when clicked, search results when typing -->
+        </div>
+        <div id="quick-results" class="quick-results">
+            <!-- Random products will be shown here initially -->
+        </div>
+    </div>
+
     <!-- Navigation Menu -->
     <nav class="main-nav">
         <div class="nav-left">
             <div class="logo">
                 <img src="img/logo.png" alt="DIDI Logo" class="logo-img">
-                <span></span>
-            </div>
-            <div class="hamburger" id="hamburger-menu">
-                <span></span>
-                <span></span>
                 <span></span>
             </div>
             <ul class="menu">
@@ -38,6 +44,11 @@
                 <img src="img/ic_order.svg" alt="Cart" class="cart-icon">
                 <span id="cart-count">0</span>
             </div>
+            <div class="hamburger" id="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </nav>
     <div class="mobile-menu" id="mobile-menu">
@@ -47,12 +58,6 @@
             <li><a href="#vendors" onclick="showVendorOptions(); return false;">Vendors</a></li>
             <li><a href="#stores" onclick="showMapView(); return false;">Find Stores</a></li>
         </ul>
-    </div>
-
-    <!-- Search Bar -->
-    <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search products...">
-        <div id="search-results"></div>
     </div>
 
     <!-- Image Carousel -->
