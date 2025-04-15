@@ -119,6 +119,40 @@ body {
     display: block;
 }
 
+/* Product Image Rotator */
+.product-image-container {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+}
+
+.product-image-rotator {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.product-image-rotator img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.product-image-rotator img.active {
+    opacity: 1;
+}
+
+/* Hover effect - pause animation on hover */
+.product-item:hover .product-image-rotator img {
+    animation-play-state: paused;
+}
+
 .product-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);

@@ -36,13 +36,13 @@ const products = [
         name: 'Wireless Earbuds',
         price: 19.99,
         sales: 100,
-        image: 'img/product-1.jpg',
+        image: 'img/earbuds.jpg',
         description: 'High quality wireless earbuds with noise cancellation',
         angles: [
-            'img/product-1.jpg',
-            'img/product-1-angle.jpg',
-            'img/product-1-back.jpg',
-            'img/product-1-detail.jpg'
+            'img/earbuds2.jpg',
+            'img/earbuds3.jpg',
+            'img/earbuds4.jpg',
+            'img/earbuds.jpg',
         ]
     },
     {
@@ -50,13 +50,55 @@ const products = [
         name: 'Smart Watch',
         price: 29.99,
         sales: 50,
-        image: 'img/product-3.jpg',
+        image: 'img/smartwatch.jpeg',
         description: 'Feature-rich smart watch with health tracking',
         angles: [
-            'img/product-3.jpg',
-            'img/product-3-angle.jpg',
-            'img/product-3-back.jpg',
-            'img/product-3-detail.jpg'
+            'img/smartwatch2.jpeg',
+            'img/smartwatch3.jpeg',
+            'img/smartwatch.jpeg',
+            'img/smartwatch4.jpeg',
+        ]
+    },
+    {
+        id: '3',
+        name: 'Smart TV',
+        price: 29.99,
+        sales: 50,
+        image: 'img/tv.jpg',
+        description: 'Feature-rich smart TV with clear pictures',
+        angles: [
+            'img/tv2.jpeg',
+            'img/tv3.jpeg',
+            'img/tv.jpg',
+            'img/tv4.jpeg',
+        ]
+    },
+    {
+        id: '4',
+        name: 'Samsung HIFI',
+        price: 129.99,
+        sales: 50,
+        image: 'img/sound.jpg',
+        description: 'great sound experience',
+        angles: [
+            'img/sound2.jpeg',
+            'img/sound3.jpeg',
+            'img/sound.jpg',
+            'img/sound2.jpeg',
+        ]
+    },
+    {
+        id: '5',
+        name: 'Samsung Fridge',
+        price: 129.99,
+        sales: 50,
+        image: 'img/fridge.jpeg',
+        description: 'Freezing everyday',
+        angles: [
+            'img/fridge2.jpeg',
+            'img/fridge3.jpeg',
+            'img/fridge4.jpeg',
+            'img/fridge2.jpeg',
         ]
     }
 ];
@@ -545,6 +587,9 @@ window.checkout = function() {
 // Initialize cart count
 updateCartCount();
 
+// Initialize product image rotators
+initializeProductImageRotators();
+
 // Search functionality
 searchInput.addEventListener('input', () => {
     const query = searchInput.value.toLowerCase().trim();
@@ -689,3 +734,108 @@ window.showStoreProducts = function(storeId) {
     // Hide map view
     document.getElementById('map-view').style.display = 'none';
 };
+
+// Initialize product image rotators
+function initializeProductImageRotators() {
+    // Get all product items
+    const productItems = document.querySelectorAll('.product-item');
+
+    // Loop through each product item
+    productItems.forEach(item => {
+        // Get product ID from onclick attribute
+        const onclickAttr = item.getAttribute('onclick');
+        if (!onclickAttr) return;
+
+        const productId = onclickAttr.match(/showProductDetails\('([^']*)'\)/)[1];
+        const product = products.find(p => p.id === productId);
+
+        if (!product || !product.angles || product.angles.length === 0) return;
+
+        // Get or create image container
+        let imageContainer = item.querySelector('.product-image-container');
+        if (!imageContainer) {
+            // If the product item doesn't have the new structure, create it
+            const oldImg = item.querySelector('img');
+            if (oldImg) {
+                oldImg.remove();
+
+                imageContainer = document.createElement('div');
+                imageContainer.className = 'product-image-container';
+
+                const rotator = document.createElement('div');
+                rotator.className = 'product-image-rotator';
+
+                imageContainer.appendChild(rotator);
+                item.insertBefore(imageContainer, item.firstChild);
+            } else {
+                return; // Skip if no image found
+            }
+        }
+
+        // Get or create rotator
+        let rotator = imageContainer.querySelector('.product-image-rotator');
+        if (!rotator) {
+            rotator = document.createElement('div');
+            rotator.className = 'product-image-rotator';
+            imageContainer.appendChild(rotator);
+        }
+
+        // Clear existing images
+        rotator.innerHTML = '';
+
+        // Add all product angles to the rotator
+        const images = [];
+        product.angles.forEach((imgSrc, index) => {
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = product.name;
+            img.dataset.index = index;
+
+            // Make the first image active
+            if (index === 0) {
+                img.classList.add('active');
+            }
+
+            rotator.appendChild(img);
+            images.push(img);
+        });
+
+        // Set up the fade animation
+        if (images.length > 1) {
+            // Store the current active index
+            let currentIndex = 0;
+
+            // Create an interval for this product item
+            const intervalId = setInterval(() => {
+                // Skip animation if user is hovering over the product
+                if (item.matches(':hover')) return;
+
+                // Fade out current image
+                images[currentIndex].classList.remove('active');
+
+                // Move to next image
+                currentIndex = (currentIndex + 1) % images.length;
+
+                // Fade in next image
+                images[currentIndex].classList.add('active');
+            }, 3000); // Change image every 3 seconds
+
+            // Store the interval ID on the element to clear it if needed
+            rotator.dataset.intervalId = intervalId;
+
+            // Clear interval when the element is removed from DOM
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    mutation.removedNodes.forEach((node) => {
+                        if (node === item || node.contains(item)) {
+                            clearInterval(intervalId);
+                            observer.disconnect();
+                        }
+                    });
+                });
+            });
+
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    });
+}
