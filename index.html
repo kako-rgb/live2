@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIDI eCommerce</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Include Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <div class="nav-left">
+            <div class="logo">DIDI</div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#vendors">Vendors</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div id="auth-section"></div>
+            <div class="cart">Cart (<span id="cart-count">0</span>)</div>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#categories">Categories</a></li>
+            <li><a href="#vendors">Vendors</a></li>
+        </ul>
+    </div>
+
+    <!-- Image Carousel -->
+    <div class="carousel">
+        <div class="slides">
+            <img src="/img/banner-one.jpg" class="slide active">
+            <img src="/img/banner-two.jpg" class="slide">
+            <img src="/img/product-1.jpg" class="slide">
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search products...">
+        <div id="search-results"></div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid" id="product-grid">
+        <!-- 20 products (4 columns x 5 rows) -->
+        <div class="product-item" onclick="showProductDetails('1')">
+            <img src="img/product-1.jpg" alt="Product 1">
+            <div class="product-price">$19.99</div>
+            <div class="product-sales">100+ sold</div>
+        </div>
+        <div class="product-item" onclick="showProductDetails('2')">
+            <img src="img/product-3.jpg" alt="Product 2">
+            <div class="product-price">$29.99</div>
+            <div class="product-sales">50+ sold</div>
+        </div>
+        <div class="product-item" onclick="showProductDetails('1')">
+            <img src="img/product-1.jpg" alt="Product 1">
+            <div class="product-price">$19.99</div>
+            <div class="product-sales">100+ sold</div>
+        </div>
+        <div class="product-item" onclick="showProductDetails('2')">
+            <img src="img/product-3.jpg" alt="Product 2">
+            <div class="product-price">$29.99</div>
+            <div class="product-sales">50+ sold</div>
+        </div>
+        <div class="product-item" onclick="showProductDetails('1')">
+            <img src="img/product-1.jpg" alt="Product 1">
+            <div class="product-price">$19.99</div>
+            <div class="product-sales">100+ sold</div>
+        </div>
+        <div class="product-item" onclick="showProductDetails('2')">
+            <img src="img/product-3.jpg" alt="Product 2">
+            <div class="product-price">$29.99</div>
+            <div class="product-sales">50+ sold</div>
+        </div>
+        <div class="product-item" onclick="showProductDetails('1')">
+            <img src="img/product-1.jpg" alt="Product 1">
+            <div class="product-price">$19.99</div>
+            <div class="product-sales">100+ sold</div>
+        </div>
+        <div class="product-item" onclick="showProductDetails('2')">
+            <img src="img/product-3.jpg" alt="Product 2">
+            <div class="product-price">$29.99</div>
+            <div class="product-sales">50+ sold</div>
+        </div>
+        <!-- Add 18 more product items similarly -->
+    </div>
+
+    <!-- Product Details Modal -->
+    <div id="product-modal" class="modal">
+        <!-- Modal content will be loaded here -->
+    </div>
+
+    <!-- Vendor Registration Form -->
+    <div id="vendor-registration" class="modal">
+        <!-- Vendor form will be here -->
+    </div>
+
+    <!-- Map View -->
+    <div id="map-view" class="map-container" style="display: none;">
+        <div id="map" style="height: 400px;"></div>
+    </div>
+
+    <script src="firebase.js"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <script src="script.js"></script>
+</body>
+</html>
