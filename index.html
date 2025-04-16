@@ -159,10 +159,49 @@
         <div id="map" style="height: 400px;"></div>
     </div>
 
+    <!-- Page Content Modal -->
+    <div id="page-modal" class="modal">
+        <div class="modal-content page-modal">
+            <span class="close">&times;</span>
+            <div id="page-content"></div>
+        </div>
+    </div>
+
     <!-- Background Image Container -->
     <div class="background-container">
         <!-- Background image will be added via CSS -->
     </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#" onclick="showPageContent('contact'); return false;">Contact Us</a></li>
+                    <li><a href="#" onclick="showPageContent('return-policy'); return false;">Return Policy</a></li>
+                    <li><a href="#" onclick="showPageContent('terms'); return false;">Terms & Conditions</a></li>
+                    <li><a href="#" onclick="showPageContent('shipping'); return false;">Shipping & Delivery</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>About DIDI</h3>
+                <p>DIDI is your one-stop shop for all your shopping needs. We offer a wide range of products at competitive prices.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 DIDI eCommerce. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="firebase.js"></script>
     <!-- Leaflet CSS -->

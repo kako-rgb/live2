@@ -601,6 +601,58 @@ updateCartCount();
 // Initialize product image rotators
 initializeProductImageRotators();
 
+// Function to show page content in modal
+window.showPageContent = function(pageType) {
+    const pageModal = document.getElementById('page-modal');
+    const pageContent = document.getElementById('page-content');
+    let title = '';
+    let content = '';
+
+    // Set content based on page type
+    switch(pageType) {
+        case 'contact':
+            title = 'Contact Us';
+            content = '<p>This page will contain contact information and a contact form. You can add your own content here.</p>';
+            break;
+        case 'return-policy':
+            title = 'Return Policy';
+            content = '<p>This page will contain the return policy details. You can add your own content here.</p>';
+            break;
+        case 'terms':
+            title = 'Terms & Conditions';
+            content = '<p>This page will contain the terms and conditions. You can add your own content here.</p>';
+            break;
+        case 'shipping':
+            title = 'Shipping & Delivery';
+            content = '<p>This page will contain shipping and delivery information. You can add your own content here.</p>';
+            break;
+        default:
+            title = 'Page Not Found';
+            content = '<p>The requested page could not be found.</p>';
+    }
+
+    // Set modal content
+    pageContent.innerHTML = `
+        <h1 class="page-title">${title}</h1>
+        ${content}
+    `;
+
+    // Show modal
+    pageModal.style.display = 'block';
+
+    // Close modal when clicking on X
+    pageModal.querySelector('.close').addEventListener('click', () => {
+        pageModal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', (event) => {
+        if (event.target === pageModal) {
+            pageModal.style.display = 'none';
+        }
+    });
+};
+
 // Search functionality
 const quickResults = document.getElementById('quick-results');
 

@@ -21,6 +21,29 @@ body {
     opacity: 0.1;
 }
 
+/* Base Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Background Container */
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('img/logo-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+}
+
 /* Navigation */
 .main-nav {
     display: flex;
@@ -471,6 +494,19 @@ body {
     flex-direction: column;
 }
 
+/* Page Modal Styles */
+.page-modal {
+    flex-direction: column;
+    max-width: 800px;
+    padding: 2rem;
+}
+
+.page-title {
+    color: #f40;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
 .cart-table {
     width: 100%;
     border-collapse: collapse;
@@ -787,4 +823,95 @@ body {
 
 .add-to-cart-small:hover {
     background: #e63900;
+}
+
+/* Footer Styles */
+.site-footer {
+    background: rgba(226, 223, 223, 0.7); /* Same as navbar */
+    color: #333;
+    padding: 2rem 0 0 0;
+    margin-top: 2rem;
+    backdrop-filter: blur(5px); /* Add blur effect for better readability */
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 250px;
+    margin-bottom: 1.5rem;
+}
+
+.footer-section h3 {
+    color: #f40;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.footer-section li {
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.footer-section a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-section a:hover {
+    color: #f40;
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #f40;
+    color: white;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+.social-icon:hover {
+    background: #e63900;
+}
+
+.footer-bottom {
+    background: rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+    }
+
+    .footer-section {
+        margin-bottom: 2rem;
+    }
 }
