@@ -43,8 +43,8 @@ body {
 }
 
 .logo-img {
-    height: 60px; /* Adjusted to requested size */
-    width: 60px; /* Adjusted to requested size */
+    height: 100px; /* Adjusted to requested size */
+    width: 100px; /* Adjusted to requested size */
     margin-right: 10px;
     object-fit: contain;
 }
