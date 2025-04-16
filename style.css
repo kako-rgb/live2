@@ -26,7 +26,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 1rem;
-    background: rgba(0, 0, 0, 0.7); /* Transparent black background */
+    background: rgba(226, 223, 223, 0.7); /* Transparent black background */
     position: relative; /* Not sticky */
     z-index: 1000;
     height: 35px;
