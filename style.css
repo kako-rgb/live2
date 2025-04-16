@@ -46,6 +46,7 @@ body {
     height: 100px; /* Adjusted to requested size */
     width: 100px; /* Adjusted to requested size */
     margin-right: 10px;
+    margin-top: 20px;
     object-fit: contain;
 }
 
