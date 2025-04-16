@@ -177,8 +177,19 @@ window.showCategories = function() {
     // Position menu under the categories link
     const categoriesLink = document.querySelector('a[href="#categories"]');
     const rect = categoriesLink.getBoundingClientRect();
+
+    // Calculate position relative to the viewport
     categoriesMenu.style.top = rect.bottom + 'px';
     categoriesMenu.style.left = rect.left + 'px';
+
+    // Ensure the menu is visible on screen
+    const menuRect = categoriesMenu.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+
+    // Adjust if menu goes off-screen to the right
+    if (rect.left + menuRect.width > viewportWidth) {
+        categoriesMenu.style.left = (viewportWidth - menuRect.width - 10) + 'px';
+    }
 };
 
 // Filter products by category
@@ -599,13 +610,28 @@ searchInput.addEventListener('click', () => {
     showRandomProducts();
 });
 
+// Use event delegation for close buttons
+document.addEventListener('click', function(e) {
+    // Check if the clicked element is a close button
+    if (e.target.classList.contains('close-results')) {
+        // Prevent the click from propagating to parent elements
+        e.stopPropagation();
+
+        // Find the parent container
+        const container = e.target.closest('#search-results, #quick-results');
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+});
+
 // Function to show random products
 function showRandomProducts() {
     // Get 4 random products
     const randomProducts = getRandomProducts(4);
 
     // Display them in quick results
-    let resultsHTML = '';
+    let resultsHTML = '<div class="close-results" onclick="document.getElementById(\'quick-results\').style.display=\'none\'">×</div>';
     randomProducts.forEach(product => {
         resultsHTML += `
             <div class="search-item" onclick="showProductDetails('${product.id}')">
@@ -621,6 +647,8 @@ function showRandomProducts() {
 
     quickResults.innerHTML = resultsHTML;
     quickResults.style.display = 'block';
+
+    // Close button is handled by event delegation
 }
 
 // Get random products
@@ -648,9 +676,9 @@ searchInput.addEventListener('input', () => {
     );
 
     if (filteredProducts.length === 0) {
-        searchResults.innerHTML = '<div class="search-item">No products found</div>';
+        searchResults.innerHTML = '<div class="close-results" onclick="document.getElementById(\'search-results\').style.display=\'none\'">×</div><div class="search-item">No products found</div>';
     } else {
-        let resultsHTML = '';
+        let resultsHTML = '<div class="close-results" onclick="document.getElementById(\'search-results\').style.display=\'none\'">×</div>';
         filteredProducts.forEach(product => {
             resultsHTML += `
                 <div class="search-item" onclick="showProductDetails('${product.id}')">
@@ -667,6 +695,8 @@ searchInput.addEventListener('input', () => {
     }
 
     searchResults.style.display = 'block';
+
+    // Close button is handled by event delegation
 });
 
 // Hide search results when clicking outside
