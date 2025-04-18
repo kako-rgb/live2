@@ -306,3 +306,126 @@
                 </div>
 
                 <div class="livestream-tab-content active" id="view-streams">
+                    <div class="stream-list">
+                        <!-- Stream list will be populated dynamically -->
+                        <div class="no-streams-message">No active streams at the moment. Be the first to start streaming!</div>
+                    </div>
+                </div>
+
+                <div class="livestream-tab-content" id="create-stream">
+                    <div class="stream-setup">
+                        <h3>Start Your Live Stream</h3>
+                        <div class="form-group">
+                            <label for="stream-title">Stream Title</label>
+                            <input type="text" id="stream-title" placeholder="Enter a title for your stream">
+                        </div>
+                        <div class="form-group">
+                            <label for="stream-description">Description</label>
+                            <textarea id="stream-description" placeholder="Describe what you'll be streaming"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="stream-category">Category</label>
+                            <select id="stream-category">
+                                <option value="product-showcase">Product Showcase</option>
+                                <option value="tutorial">Tutorial</option>
+                                <option value="qa">Q&A Session</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="stream-preview">
+                            <h4>Preview</h4>
+                            <video id="stream-preview" autoplay muted></video>
+                        </div>
+                        <div class="stream-controls">
+                            <button id="start-stream-btn" class="primary-btn">Start Streaming</button>
+                            <button id="stop-stream-btn" class="secondary-btn" disabled>End Stream</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Stream View Modal -->
+    <div id="active-stream-modal" class="modal">
+        <div class="modal-content active-stream-modal">
+            <span class="close">&times;</span>
+            <div id="active-stream-content">
+                <div class="active-stream-header">
+                    <h2 id="active-stream-title">Stream Title</h2>
+                    <p id="active-stream-host">Hosted by: Username</p>
+                </div>
+                <div class="active-stream-video">
+                    <video id="active-stream-player" autoplay></video>
+                </div>
+                <div class="active-stream-info">
+                    <p id="active-stream-description">Stream description will appear here.</p>
+                    <div class="active-stream-stats">
+                        <span id="active-stream-viewers">0 viewers</span>
+                        <span id="active-stream-duration">00:00:00</span>
+                    </div>
+                </div>
+                <div class="active-stream-chat">
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Chat messages will be populated dynamically -->
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chat-message" placeholder="Type a message...">
+                        <button id="send-chat-btn">Send</button>
+                    </div>
+                </div>
+                <div class="active-stream-actions">
+                    <button id="back-to-streams-btn">Back to Streams</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Image Container -->
+    <div class="background-container">
+        <!-- Background image will be added via CSS -->
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#" onclick="showPageContent('contact'); return false;">Contact Us</a></li>
+                    <li><a href="#" onclick="showPageContent('return-policy'); return false;">Return Policy</a></li>
+                    <li><a href="#" onclick="showPageContent('terms'); return false;">Terms & Conditions</a></li>
+                    <li><a href="#" onclick="showPageContent('shipping'); return false;">Shipping & Delivery</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>About DIDI</h3>
+                <p>DIDI is your one-stop shop for all your shopping needs. We offer a wide range of products at competitive prices.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 DIDI eCommerce. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="firebase.js"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <script src="script.js"></script>
+</body>
+</html>
