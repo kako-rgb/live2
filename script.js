@@ -204,29 +204,465 @@ window.filterByCategory = function(categoryId) {
 
 // Vendor options
 window.showVendorOptions = function() {
-    const user = firebase.auth().currentUser;
+    const vendorModal = document.getElementById('vendor-registration');
+    vendorModal.style.display = 'block';
 
-    if (user) {
-        // Check if user is a vendor
-        firebase.firestore().collection('users').doc(user.uid).get()
-            .then(doc => {
-                if (doc.exists && doc.data().role === 'vendor') {
-                    // Show vendor dashboard
-                    alert('Vendor dashboard coming soon!');
-                } else {
-                    // Show vendor registration
-                    showVendorRegistration();
-                }
-            })
-            .catch(error => {
-                console.error('Error checking vendor status:', error);
-                alert('Error checking vendor status. Please try again.');
-            });
-    } else {
-        // Show login modal
-        alert('Please login to access vendor features');
-        showAuthModal();
+    // Set up tab switching
+    setupVendorTabs();
+
+    // Check if user is logged in and is a vendor
+    checkVendorStatus();
+
+    // Load categories for product form
+    loadCategories();
+
+    // Close modal when clicking on X
+    vendorModal.querySelector('.close').addEventListener('click', () => {
+        vendorModal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', (event) => {
+        if (event.target === vendorModal) {
+            vendorModal.style.display = 'none';
+        }
+    });
+
+    // Set up vendor registration form submission
+    document.getElementById('vendor-register-form').addEventListener('submit', registerVendor);
+
+    // Set up product form submission
+    document.getElementById('product-form').addEventListener('submit', addProduct);
+};
+
+// Function to set up vendor tabs
+function setupVendorTabs() {
+    const tabs = document.querySelectorAll('.vendor-tab');
+    const tabContents = document.querySelectorAll('.vendor-tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+
+            // Add active class to clicked tab
+            tab.classList.add('active');
+
+            // Hide all tab contents
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Show the corresponding tab content
+            const tabName = tab.getAttribute('data-tab');
+            if (tabName === 'register') {
+                document.getElementById('vendor-register').classList.add('active');
+            } else if (tabName === 'dashboard') {
+                document.getElementById('vendor-dashboard').classList.add('active');
+            }
+        });
+    });
+}
+
+// Function to check vendor status
+function checkVendorStatus() {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        // Get user data
+        fetch('http://localhost:5000/api/auth/user', {
+            headers: {
+                'x-auth-token': token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.isVendor) {
+                // User is a vendor, show dashboard
+                document.getElementById('vendor-not-logged-in').style.display = 'none';
+                document.getElementById('vendor-logged-in').style.display = 'block';
+
+                // Load vendor products
+                loadVendorProducts(data._id);
+            } else {
+                // User is logged in but not a vendor
+                document.getElementById('vendor-not-logged-in').innerHTML = `
+                    <p>You are logged in as ${data.name}, but you are not registered as a vendor.</p>
+                    <p>Please register as a vendor to access the dashboard.</p>
+                    <button class="primary-btn" onclick="switchToVendorRegister()">Register as Vendor</button>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error checking vendor status:', error);
+        });
     }
+}
+
+// Function to switch to vendor register tab
+function switchToVendorRegister() {
+    document.querySelector('.vendor-tab[data-tab="register"]').click();
+}
+
+// Function to register as a vendor
+function registerVendor(e) {
+    e.preventDefault();
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert('Please log in to register as a vendor');
+        return;
+    }
+
+    const shopName = document.getElementById('shop-name').value;
+    const shopDescription = document.getElementById('shop-description').value;
+    const phone = document.getElementById('vendor-phone').value;
+    const street = document.getElementById('vendor-street').value;
+    const city = document.getElementById('vendor-city').value;
+    const state = document.getElementById('vendor-state').value;
+    const zipCode = document.getElementById('vendor-zip').value;
+    const country = document.getElementById('vendor-country').value;
+
+    const vendorData = {
+        shopName,
+        shopDescription,
+        phone,
+        address: {
+            street,
+            city,
+            state,
+            zipCode,
+            country
+        },
+        isVendor: true
+    };
+
+    // Update user to become a vendor
+    fetch('http://localhost:5000/api/users/update', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+        },
+        body: JSON.stringify(vendorData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('You are now registered as a vendor!');
+        // Switch to dashboard tab
+        document.querySelector('.vendor-tab[data-tab="dashboard"]').click();
+        // Refresh vendor status
+        checkVendorStatus();
+    })
+    .catch(error => {
+        console.error('Error registering as vendor:', error);
+        alert('Failed to register as vendor. Please try again.');
+    });
+}
+
+// Function to load categories
+function loadCategories() {
+    fetch('http://localhost:5000/api/categories')
+    .then(response => response.json())
+    .then(categories => {
+        const categorySelect = document.getElementById('product-category');
+        categorySelect.innerHTML = '';
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category._id;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+        });
+    })
+    .catch(error => {
+        console.error('Error loading categories:', error);
+    });
+}
+
+// Function to load vendor products
+function loadVendorProducts(vendorId) {
+    fetch(`http://localhost:5000/api/products/vendor/${vendorId}`)
+    .then(response => response.json())
+    .then(products => {
+        const productCount = document.getElementById('vendor-product-count');
+        productCount.textContent = products.length;
+
+        // Calculate revenue (in a real app, this would come from orders)
+        let revenue = 0;
+        products.forEach(product => {
+            revenue += product.price * 10; // Assuming 10 sales per product for demo
+        });
+
+        const revenueElement = document.getElementById('vendor-revenue');
+        revenueElement.textContent = `KES ${revenue.toFixed(2)}`;
+
+        // Set order count (mock data for demo)
+        const orderCount = document.getElementById('vendor-order-count');
+        orderCount.textContent = products.length * 10; // Assuming 10 orders per product for demo
+    })
+    .catch(error => {
+        console.error('Error loading vendor products:', error);
+    });
+}
+
+// Function to show vendor products
+function showVendorProducts() {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        return;
+    }
+
+    // Get user data to get vendor ID
+    fetch('http://localhost:5000/api/auth/user', {
+        headers: {
+            'x-auth-token': token
+        }
+    })
+    .then(response => response.json())
+    .then(userData => {
+        // Get vendor products
+        return fetch(`http://localhost:5000/api/products/vendor/${userData._id}`);
+    })
+    .then(response => response.json())
+    .then(products => {
+        const productsList = document.getElementById('vendor-products-list');
+        productsList.style.display = 'block';
+
+        // Hide add product form
+        document.getElementById('add-product-form').style.display = 'none';
+
+        const productListContainer = productsList.querySelector('.product-list-container');
+        productListContainer.innerHTML = '';
+
+        if (products.length === 0) {
+            productListContainer.innerHTML = '<p>You have no products yet. Add your first product!</p>';
+            return;
+        }
+
+        products.forEach(product => {
+            const productItem = document.createElement('div');
+            productItem.className = 'vendor-product-item';
+            productItem.innerHTML = `
+                <img src="${product.images[0] || 'img/placeholder.jpg'}" alt="${product.name}" class="vendor-product-image">
+                <div class="vendor-product-info">
+                    <div class="vendor-product-name">${product.name}</div>
+                    <div class="vendor-product-price">KES ${product.price.toFixed(2)}</div>
+                    <div class="vendor-product-stock">In Stock: ${product.quantity}</div>
+                    <div class="vendor-product-actions">
+                        <button class="edit-product-btn" onclick="editProduct('${product._id}')">Edit</button>
+                        <button class="delete-product-btn" onclick="deleteProduct('${product._id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+
+            productListContainer.appendChild(productItem);
+        });
+    })
+    .catch(error => {
+        console.error('Error showing vendor products:', error);
+    });
+}
+
+// Function to show add product form
+function showAddProductForm() {
+    // Hide products list
+    document.getElementById('vendor-products-list').style.display = 'none';
+
+    // Show add product form
+    document.getElementById('add-product-form').style.display = 'block';
+
+    // Reset form
+    document.getElementById('product-form').reset();
+}
+
+// Function to cancel adding product
+function cancelAddProduct() {
+    // Hide add product form
+    document.getElementById('add-product-form').style.display = 'none';
+
+    // Show products list
+    showVendorProducts();
+}
+
+// Function to add a product
+function addProduct(e) {
+    e.preventDefault();
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert('Please log in to add a product');
+        return;
+    }
+
+    const name = document.getElementById('product-name').value;
+    const description = document.getElementById('product-description').value;
+    const price = parseFloat(document.getElementById('product-price').value);
+    const category = document.getElementById('product-category').value;
+    const quantity = parseInt(document.getElementById('product-quantity').value);
+
+    // Get image URLs
+    const images = [];
+    const image1 = document.getElementById('product-image-1').value;
+    const image2 = document.getElementById('product-image-2').value;
+    const image3 = document.getElementById('product-image-3').value;
+
+    if (image1) images.push(image1);
+    if (image2) images.push(image2);
+    if (image3) images.push(image3);
+
+    const productData = {
+        name,
+        description,
+        price,
+        category,
+        quantity,
+        images
+    };
+
+    // Create product
+    fetch('http://localhost:5000/api/products', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+        },
+        body: JSON.stringify(productData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Product added successfully!');
+        // Show products list
+        showVendorProducts();
+    })
+    .catch(error => {
+        console.error('Error adding product:', error);
+        alert('Failed to add product. Please try again.');
+    });
+}
+
+// Function to edit a product
+function editProduct(productId) {
+    // Get product data
+    fetch(`http://localhost:5000/api/products/${productId}`)
+    .then(response => response.json())
+    .then(product => {
+        // Show add product form
+        showAddProductForm();
+
+        // Fill form with product data
+        document.getElementById('product-name').value = product.name;
+        document.getElementById('product-description').value = product.description;
+        document.getElementById('product-price').value = product.price;
+        document.getElementById('product-category').value = product.category._id;
+        document.getElementById('product-quantity').value = product.quantity;
+
+        // Fill image URLs
+        if (product.images.length > 0) document.getElementById('product-image-1').value = product.images[0];
+        if (product.images.length > 1) document.getElementById('product-image-2').value = product.images[1];
+        if (product.images.length > 2) document.getElementById('product-image-3').value = product.images[2];
+
+        // Change form submission to update product
+        const form = document.getElementById('product-form');
+        form.removeEventListener('submit', addProduct);
+        form.addEventListener('submit', (e) => updateProduct(e, productId));
+
+        // Change button text
+        form.querySelector('button[type="submit"]').textContent = 'Update Product';
+    })
+    .catch(error => {
+        console.error('Error getting product for edit:', error);
+    });
+}
+
+// Function to update a product
+function updateProduct(e, productId) {
+    e.preventDefault();
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert('Please log in to update a product');
+        return;
+    }
+
+    const name = document.getElementById('product-name').value;
+    const description = document.getElementById('product-description').value;
+    const price = parseFloat(document.getElementById('product-price').value);
+    const category = document.getElementById('product-category').value;
+    const quantity = parseInt(document.getElementById('product-quantity').value);
+
+    // Get image URLs
+    const images = [];
+    const image1 = document.getElementById('product-image-1').value;
+    const image2 = document.getElementById('product-image-2').value;
+    const image3 = document.getElementById('product-image-3').value;
+
+    if (image1) images.push(image1);
+    if (image2) images.push(image2);
+    if (image3) images.push(image3);
+
+    const productData = {
+        name,
+        description,
+        price,
+        category,
+        quantity,
+        images
+    };
+
+    // Update product
+    fetch(`http://localhost:5000/api/products/${productId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+        },
+        body: JSON.stringify(productData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Product updated successfully!');
+        // Show products list
+        showVendorProducts();
+    })
+    .catch(error => {
+        console.error('Error updating product:', error);
+        alert('Failed to update product. Please try again.');
+    });
+}
+
+// Function to delete a product
+function deleteProduct(productId) {
+    if (!confirm('Are you sure you want to delete this product?')) {
+        return;
+    }
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert('Please log in to delete a product');
+        return;
+    }
+
+    // Delete product
+    fetch(`http://localhost:5000/api/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+            'x-auth-token': token
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Product deleted successfully!');
+        // Refresh products list
+        showVendorProducts();
+    })
+    .catch(error => {
+        console.error('Error deleting product:', error);
+        alert('Failed to delete product. Please try again.');
+    });
 };
 
 // Add to cart function
