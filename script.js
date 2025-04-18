@@ -601,6 +601,295 @@ updateCartCount();
 // Initialize product image rotators
 initializeProductImageRotators();
 
+// Function to show live stream modal
+window.showLiveStream = function() {
+    const livestreamModal = document.getElementById('livestream-modal');
+
+    // Show the modal
+    livestreamModal.style.display = 'block';
+
+    // Load mock streams
+    loadMockStreams();
+
+    // Set up tab switching
+    setupLivestreamTabs();
+
+    // Set up camera preview if on create tab
+    if (document.querySelector('.livestream-tab[data-tab="create"]').classList.contains('active')) {
+        setupCameraPreview();
+    }
+
+    // Close modal when clicking on X
+    livestreamModal.querySelector('.close').addEventListener('click', () => {
+        livestreamModal.style.display = 'none';
+        stopCameraPreview();
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', (event) => {
+        if (event.target === livestreamModal) {
+            livestreamModal.style.display = 'none';
+            stopCameraPreview();
+        }
+    });
+};
+
+// Function to set up livestream tabs
+function setupLivestreamTabs() {
+    const tabs = document.querySelectorAll('.livestream-tab');
+    const tabContents = document.querySelectorAll('.livestream-tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+
+            // Add active class to clicked tab
+            tab.classList.add('active');
+
+            // Hide all tab contents
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Show the corresponding tab content
+            const tabName = tab.getAttribute('data-tab');
+            if (tabName === 'view') {
+                document.getElementById('view-streams').classList.add('active');
+                stopCameraPreview();
+            } else if (tabName === 'create') {
+                document.getElementById('create-stream').classList.add('active');
+                setupCameraPreview();
+            }
+        });
+    });
+}
+
+// Function to load mock streams
+function loadMockStreams() {
+    const streamList = document.querySelector('.stream-list');
+    const noStreamsMessage = document.querySelector('.no-streams-message');
+
+    // Mock stream data
+    const mockStreams = [
+        {
+            id: 1,
+            title: 'New Electronics Showcase',
+            host: 'TechVendor',
+            thumbnail: 'img/product-1.jpg',
+            viewers: 42,
+            description: 'Exploring the latest electronics and gadgets available in our store.'
+        },
+        {
+            id: 2,
+            title: 'Fashion Trends 2025',
+            host: 'StyleGuru',
+            thumbnail: 'img/product-3.jpg',
+            viewers: 78,
+            description: 'Check out the upcoming fashion trends for 2025.'
+        },
+        {
+            id: 3,
+            title: 'Home Appliance Tutorial',
+            host: 'HomeExpert',
+            thumbnail: 'img/fridge.jpg',
+            viewers: 15,
+            description: 'Learn how to make the most of your home appliances.'
+        }
+    ];
+
+    // If there are streams, hide the no streams message and show the streams
+    if (mockStreams.length > 0) {
+        noStreamsMessage.style.display = 'none';
+
+        // Clear existing streams
+        streamList.innerHTML = '';
+
+        // Add mock streams
+        mockStreams.forEach(stream => {
+            const streamItem = document.createElement('div');
+            streamItem.className = 'stream-item';
+            streamItem.setAttribute('data-stream-id', stream.id);
+            streamItem.innerHTML = `
+                <div class="stream-thumbnail">
+                    <img src="${stream.thumbnail}" alt="${stream.title}">
+                    <div class="live-badge">LIVE</div>
+                    <div class="stream-viewers">
+                        <i class="fas fa-eye"></i> ${stream.viewers}
+                    </div>
+                </div>
+                <div class="stream-info">
+                    <div class="stream-title">${stream.title}</div>
+                    <div class="stream-host">Hosted by: ${stream.host}</div>
+                </div>
+            `;
+
+            // Add click event to view the stream
+            streamItem.addEventListener('click', () => {
+                viewStream(stream);
+            });
+
+            streamList.appendChild(streamItem);
+        });
+    } else {
+        noStreamsMessage.style.display = 'block';
+    }
+}
+
+// Function to view a stream
+function viewStream(stream) {
+    const activeStreamModal = document.getElementById('active-stream-modal');
+    const livestreamModal = document.getElementById('livestream-modal');
+
+    // Hide the livestream modal
+    livestreamModal.style.display = 'none';
+
+    // Set stream details
+    document.getElementById('active-stream-title').textContent = stream.title;
+    document.getElementById('active-stream-host').textContent = `Hosted by: ${stream.host}`;
+    document.getElementById('active-stream-description').textContent = stream.description;
+    document.getElementById('active-stream-viewers').textContent = `${stream.viewers} viewers`;
+
+    // Show a placeholder video
+    const videoPlayer = document.getElementById('active-stream-player');
+    videoPlayer.poster = stream.thumbnail;
+
+    // Show the active stream modal
+    activeStreamModal.style.display = 'block';
+
+    // Set up back button
+    document.getElementById('back-to-streams-btn').addEventListener('click', () => {
+        activeStreamModal.style.display = 'none';
+        livestreamModal.style.display = 'block';
+    });
+
+    // Close modal when clicking on X
+    activeStreamModal.querySelector('.close').addEventListener('click', () => {
+        activeStreamModal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', (event) => {
+        if (event.target === activeStreamModal) {
+            activeStreamModal.style.display = 'none';
+        }
+    });
+
+    // Set up chat functionality
+    setupChat();
+}
+
+// Function to set up chat
+function setupChat() {
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-message');
+    const sendButton = document.getElementById('send-chat-btn');
+
+    // Clear existing messages
+    chatMessages.innerHTML = '';
+
+    // Add some mock messages
+    addChatMessage('System', 'Welcome to the live stream! Please be respectful in the chat.');
+    addChatMessage('Viewer1', 'Hello everyone! Excited to be here.');
+    addChatMessage('Viewer2', 'Can you show that product again?');
+
+    // Send message when clicking send button
+    sendButton.addEventListener('click', sendChatMessage);
+
+    // Send message when pressing Enter
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendChatMessage();
+        }
+    });
+}
+
+// Function to add a chat message
+function addChatMessage(user, message) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageElement = document.createElement('div');
+    messageElement.className = 'chat-message';
+    messageElement.innerHTML = `<span class="chat-user">${user}:</span> ${message}`;
+    chatMessages.appendChild(messageElement);
+
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Function to send a chat message
+function sendChatMessage() {
+    const chatInput = document.getElementById('chat-message');
+    const message = chatInput.value.trim();
+
+    if (message) {
+        // Add the message to the chat
+        addChatMessage('You', message);
+
+        // Clear the input
+        chatInput.value = '';
+    }
+}
+
+// Function to set up camera preview
+function setupCameraPreview() {
+    const videoPreview = document.getElementById('stream-preview');
+    const startButton = document.getElementById('start-stream-btn');
+    const stopButton = document.getElementById('stop-stream-btn');
+
+    // Check if browser supports getUserMedia
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                // Show the stream in the video element
+                videoPreview.srcObject = stream;
+
+                // Enable start button
+                startButton.disabled = false;
+
+                // Set up start streaming button
+                startButton.addEventListener('click', () => {
+                    // In a real app, this would start the actual streaming
+                    startButton.disabled = true;
+                    stopButton.disabled = false;
+                    alert('Streaming started! In a real implementation, this would connect to a streaming service.');
+                });
+
+                // Set up stop streaming button
+                stopButton.addEventListener('click', () => {
+                    stopButton.disabled = true;
+                    startButton.disabled = false;
+                    alert('Stream ended. Thank you for streaming!');
+                });
+            })
+            .catch(error => {
+                console.error('Error accessing camera:', error);
+                videoPreview.parentElement.innerHTML = `
+                    <div class="camera-error">
+                        <p>Could not access camera. Please make sure you have granted camera permissions.</p>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            });
+    } else {
+        videoPreview.parentElement.innerHTML = `
+            <div class="camera-error">
+                <p>Your browser does not support camera access.</p>
+                <p>Please use a modern browser like Chrome, Firefox, or Edge.</p>
+            </div>
+        `;
+    }
+}
+
+// Function to stop camera preview
+function stopCameraPreview() {
+    const videoPreview = document.getElementById('stream-preview');
+
+    if (videoPreview && videoPreview.srcObject) {
+        const tracks = videoPreview.srcObject.getTracks();
+
+        tracks.forEach(track => track.stop());
+        videoPreview.srcObject = null;
+    }
+}
+
 // Function to show page content in modal
 window.showPageContent = function(pageType) {
     const pageModal = document.getElementById('page-modal');

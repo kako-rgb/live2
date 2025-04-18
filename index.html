@@ -25,6 +25,7 @@
                 <li><a href="#categories" onclick="showCategories(); return false;">Categories</a></li>
                 <li><a href="#vendors" onclick="showVendorOptions(); return false;">Vendors</a></li>
                 <li><a href="#stores" onclick="showMapView(); return false;">Find Stores</a></li>
+                <li><a href="#livestream" onclick="showLiveStream(); return false;">Live Stream</a></li>
             </ul>
         </div>
         <div class="nav-right">
@@ -46,6 +47,7 @@
             <li><a href="#categories" onclick="showCategories(); return false;">Categories</a></li>
             <li><a href="#vendors" onclick="showVendorOptions(); return false;">Vendors</a></li>
             <li><a href="#stores" onclick="showMapView(); return false;">Find Stores</a></li>
+            <li><a href="#livestream" onclick="showLiveStream(); return false;">Live Stream</a></li>
         </ul>
     </div>
 
@@ -65,7 +67,7 @@
     <div class="carousel">
         <div class="slides">
             <img src="/img/banner-one.jpg" class="slide active">
-            <img src="/img/banner-two.jpg" class="slide">
+            <img src="/img/banner5.png" class="slide">
             <img src="/img/product-1.jpg" class="slide">
         </div>
     </div>
@@ -164,6 +166,95 @@
         <div class="modal-content page-modal">
             <span class="close">&times;</span>
             <div id="page-content"></div>
+        </div>
+    </div>
+
+    <!-- Live Stream Modal -->
+    <div id="livestream-modal" class="modal">
+        <div class="modal-content livestream-modal">
+            <span class="close">&times;</span>
+            <div id="livestream-content">
+                <div class="livestream-header">
+                    <h2>Live Streams</h2>
+                    <div class="livestream-tabs">
+                        <button class="livestream-tab active" data-tab="view">View Streams</button>
+                        <button class="livestream-tab" data-tab="create">Start Streaming</button>
+                    </div>
+                </div>
+
+                <div class="livestream-tab-content active" id="view-streams">
+                    <div class="stream-list">
+                        <!-- Stream list will be populated dynamically -->
+                        <div class="no-streams-message">No active streams at the moment. Be the first to start streaming!</div>
+                    </div>
+                </div>
+
+                <div class="livestream-tab-content" id="create-stream">
+                    <div class="stream-setup">
+                        <h3>Start Your Live Stream</h3>
+                        <div class="form-group">
+                            <label for="stream-title">Stream Title</label>
+                            <input type="text" id="stream-title" placeholder="Enter a title for your stream">
+                        </div>
+                        <div class="form-group">
+                            <label for="stream-description">Description</label>
+                            <textarea id="stream-description" placeholder="Describe what you'll be streaming"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="stream-category">Category</label>
+                            <select id="stream-category">
+                                <option value="product-showcase">Product Showcase</option>
+                                <option value="tutorial">Tutorial</option>
+                                <option value="qa">Q&A Session</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="stream-preview">
+                            <h4>Preview</h4>
+                            <video id="stream-preview" autoplay muted></video>
+                        </div>
+                        <div class="stream-controls">
+                            <button id="start-stream-btn" class="primary-btn">Start Streaming</button>
+                            <button id="stop-stream-btn" class="secondary-btn" disabled>End Stream</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Stream View Modal -->
+    <div id="active-stream-modal" class="modal">
+        <div class="modal-content active-stream-modal">
+            <span class="close">&times;</span>
+            <div id="active-stream-content">
+                <div class="active-stream-header">
+                    <h2 id="active-stream-title">Stream Title</h2>
+                    <p id="active-stream-host">Hosted by: Username</p>
+                </div>
+                <div class="active-stream-video">
+                    <video id="active-stream-player" autoplay></video>
+                </div>
+                <div class="active-stream-info">
+                    <p id="active-stream-description">Stream description will appear here.</p>
+                    <div class="active-stream-stats">
+                        <span id="active-stream-viewers">0 viewers</span>
+                        <span id="active-stream-duration">00:00:00</span>
+                    </div>
+                </div>
+                <div class="active-stream-chat">
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Chat messages will be populated dynamically -->
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chat-message" placeholder="Type a message...">
+                        <button id="send-chat-btn">Send</button>
+                    </div>
+                </div>
+                <div class="active-stream-actions">
+                    <button id="back-to-streams-btn">Back to Streams</button>
+                </div>
+            </div>
         </div>
     </div>
 
