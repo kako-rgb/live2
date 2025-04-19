@@ -16,12 +16,12 @@
     <!-- Navigation Menu -->
     <nav class="main-nav">
         <div class="nav-left">
-            <div class="logo">
+            <div class="logo" onclick="showAllProducts(); return false;" style="cursor: pointer;">
                 <img src="img/logo.png" alt="DIDI Logo" class="logo-img">
                 <span></span>
             </div>
             <ul class="menu">
-                <li><a href="#home">Home</a></li>
+                <li><a href="#home" onclick="showAllProducts(); return false;">Home</a></li>
                 <li><a href="#categories" onclick="showCategories(); return false;">Categories</a></li>
                 <li><a href="#vendors" onclick="showVendorOptions(); return false;">Vendors</a></li>
                 <li><a href="#stores" onclick="showMapView(); return false;">Find Stores</a></li>
@@ -43,7 +43,7 @@
     </nav>
     <div class="mobile-menu" id="mobile-menu">
         <ul>
-            <li><a href="#home">Home</a></li>
+            <li><a href="#home" onclick="showAllProducts(); return false;">Home</a></li>
             <li><a href="#categories" onclick="showCategories(); return false;">Categories</a></li>
             <li><a href="#vendors" onclick="showVendorOptions(); return false;">Vendors</a></li>
             <li><a href="#stores" onclick="showMapView(); return false;">Find Stores</a></li>

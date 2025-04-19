@@ -7,6 +7,78 @@ const hamburger = document.getElementById('hamburger-menu');
 const mobileMenu = document.getElementById('mobile-menu');
 const categoriesMenu = document.querySelector('.categories-menu');
 
+// Browser history state management
+let currentState = 'home';
+let stateHistory = ['home'];
+
+// Function to update browser history
+function updateHistory(state, title, url) {
+    // Add state to history
+    window.history.pushState({ page: state }, title, url);
+    currentState = state;
+    stateHistory.push(state);
+}
+
+// Handle browser back button
+window.addEventListener('popstate', function(event) {
+    if (event.state) {
+        handleStateChange(event.state.page);
+    } else {
+        // Default to home if no state
+        showAllProducts();
+    }
+});
+
+// Function to handle state changes
+function handleStateChange(state) {
+    // Close any open modals
+    closeAllModals();
+
+    // Handle different states
+    switch(state) {
+        case 'home':
+            showAllProducts();
+            break;
+        case 'category':
+            // The category ID would be stored in the URL
+            const categoryId = parseInt(window.location.hash.split('-')[1]);
+            if (categoryId) {
+                filterByCategory(categoryId);
+            } else {
+                showAllProducts();
+            }
+            break;
+        case 'product':
+            // The product ID would be stored in the URL
+            const productId = window.location.hash.split('-')[1];
+            if (productId) {
+                showProductDetails(productId);
+            } else {
+                showAllProducts();
+            }
+            break;
+        case 'vendors':
+            showVendorOptions();
+            break;
+        case 'livestream':
+            showLiveStream();
+            break;
+        case 'map':
+            showMapView();
+            break;
+        default:
+            showAllProducts();
+    }
+}
+
+// Function to close all modals
+function closeAllModals() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.style.display = 'none';
+    });
+}
+
 // Initialize carousel
 let currentSlide = 0;
 const slides = document.querySelectorAll('.slide');
@@ -38,6 +110,8 @@ const products = [
         sales: 100,
         image: 'img/earbuds.jpg',
         description: 'High quality wireless earbuds with noise cancellation',
+        category: 1, // Electronics
+        quantity: 25,
         angles: [
             'img/earbuds2.jpg',
             'img/earbuds3.jpg',
@@ -52,6 +126,8 @@ const products = [
         sales: 50,
         image: 'img/smartwatch.jpeg',
         description: 'Feature-rich smart watch with health tracking',
+        category: 1, // Electronics
+        quantity: 15,
         angles: [
             'img/smartwatch2.jpeg',
             'img/smartwatch3.jpeg',
@@ -66,6 +142,8 @@ const products = [
         sales: 50,
         image: 'img/tv.jpg',
         description: 'Feature-rich smart TV with clear pictures',
+        category: 1, // Electronics
+        quantity: 10,
         angles: [
             'img/tv2.jpeg',
             'img/tv3.jpeg',
@@ -79,7 +157,9 @@ const products = [
         price: 12999.99,
         sales: 50,
         image: 'img/sound.jpg',
-        description: 'great sound experience',
+        description: 'Great sound experience',
+        category: 1, // Electronics
+        quantity: 20,
         angles: [
             'img/sound2.jpeg',
             'img/sound3.jpeg',
@@ -94,11 +174,93 @@ const products = [
         sales: 50,
         image: 'img/fridge.jpeg',
         description: 'Freezing everyday',
+        category: 3, // Home & Kitchen
+        quantity: 8,
         angles: [
             'img/fridge2.jpeg',
             'img/fridge3.jpeg',
             'img/fridge4.jpeg',
             'img/fridge2.jpeg',
+        ]
+    },
+    {
+        id: '6',
+        name: 'Men\'s T-Shirt',
+        price: 1299.99,
+        sales: 120,
+        image: 'img/product-7.jpg',
+        description: 'Comfortable cotton t-shirt for everyday wear',
+        category: 2, // Clothing
+        quantity: 50,
+        angles: [
+            'img/product-7.jpg',
+            'img/product-7.jpg',
+            'img/product-7.jpg',
+            'img/product-7.jpg',
+        ]
+    },
+    {
+        id: '7',
+        name: 'Women\'s Dress',
+        price: 2999.99,
+        sales: 80,
+        image: 'img/product-3.jpg',
+        description: 'Elegant dress for special occasions',
+        category: 2, // Clothing
+        quantity: 30,
+        angles: [
+            'img/product-3.jpg',
+            'img/product-3.jpg',
+            'img/product-3.jpg',
+            'img/product-3.jpg',
+        ]
+    },
+    {
+        id: '8',
+        name: 'Face Cream',
+        price: 1899.99,
+        sales: 65,
+        image: 'img/product-1.jpg',
+        description: 'Hydrating face cream for all skin types',
+        category: 4, // Beauty & Personal Care
+        quantity: 40,
+        angles: [
+            'img/product-1.jpg',
+            'img/product-1.jpg',
+            'img/product-1.jpg',
+            'img/product-1.jpg',
+        ]
+    },
+    {
+        id: '9',
+        name: 'Yoga Mat',
+        price: 1499.99,
+        sales: 45,
+        image: 'img/product-3.jpg',
+        description: 'Non-slip yoga mat for comfortable workouts',
+        category: 5, // Sports & Outdoors
+        quantity: 25,
+        angles: [
+            'img/product-3.jpg',
+            'img/product-3.jpg',
+            'img/product-3.jpg',
+            'img/product-3.jpg',
+        ]
+    },
+    {
+        id: '10',
+        name: 'Coffee Maker',
+        price: 4999.99,
+        sales: 30,
+        image: 'img/product-1.jpg',
+        description: 'Automatic coffee maker for perfect brews',
+        category: 3, // Home & Kitchen
+        quantity: 15,
+        angles: [
+            'img/product-1.jpg',
+            'img/product-1.jpg',
+            'img/product-1.jpg',
+            'img/product-1.jpg',
         ]
     }
 ];
@@ -106,6 +268,11 @@ const products = [
 // Product Click Handler
 window.showProductDetails = function(productId) {
     const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Update browser history
+    updateHistory('product', product.name, `#product-${productId}`);
+
     const modal = document.getElementById('product-modal');
     modal.innerHTML = `
         <div class="modal-content">
@@ -142,6 +309,10 @@ window.showProductDetails = function(productId) {
 
     document.querySelector('.close').addEventListener('click', () => {
         modal.style.display = 'none';
+        // Go back in history when closing the modal
+        if (currentState === 'product') {
+            window.history.back();
+        }
     });
 };
 
@@ -174,32 +345,166 @@ window.showCategories = function() {
     // Toggle menu visibility
     categoriesMenu.classList.toggle('active');
 
-    // Position menu under the categories link
-    const categoriesLink = document.querySelector('a[href="#categories"]');
-    const rect = categoriesLink.getBoundingClientRect();
+    // Check if we're on mobile
+    const isMobile = window.innerWidth <= 768;
 
-    // Calculate position relative to the viewport
-    categoriesMenu.style.top = rect.bottom + 'px';
-    categoriesMenu.style.left = rect.left + 'px';
+    if (isMobile) {
+        // On mobile, hide the mobile menu when showing categories
+        if (categoriesMenu.classList.contains('active')) {
+            mobileMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
 
-    // Ensure the menu is visible on screen
-    const menuRect = categoriesMenu.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
+        // Position the categories menu for mobile
+        categoriesMenu.style.top = '60px';
+        categoriesMenu.style.left = '0';
+        categoriesMenu.style.width = '100%';
+    } else {
+        // Position menu under the categories link on desktop
+        const categoriesLink = document.querySelector('a[href="#categories"]');
+        const rect = categoriesLink.getBoundingClientRect();
 
-    // Adjust if menu goes off-screen to the right
-    if (rect.left + menuRect.width > viewportWidth) {
-        categoriesMenu.style.left = (viewportWidth - menuRect.width - 10) + 'px';
+        // Calculate position relative to the viewport
+        categoriesMenu.style.top = rect.bottom + 'px';
+        categoriesMenu.style.left = rect.left + 'px';
+        categoriesMenu.style.width = '200px'; // Reset width
+
+        // Ensure the menu is visible on screen
+        const menuRect = categoriesMenu.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+
+        // Adjust if menu goes off-screen to the right
+        if (rect.left + menuRect.width > viewportWidth) {
+            categoriesMenu.style.left = (viewportWidth - menuRect.width - 10) + 'px';
+        }
     }
 };
 
 // Filter products by category
 window.filterByCategory = function(categoryId) {
     console.log('Filtering by category:', categoryId);
-    // This would typically fetch products from the database
-    // For now, just log the action
+
+    // Find the category
+    const category = categories.find(cat => cat.id === categoryId);
+    if (!category) return;
+
+    // Update browser history
+    updateHistory('category', category.name, `#category-${categoryId}`);
+
+    // Filter products by category
+    const filteredProducts = products.filter(product => product.category === categoryId);
+
+    // Display filtered products
+    displayProducts(filteredProducts);
 
     // Hide categories menu
     categoriesMenu.classList.remove('active');
+
+    // Hide mobile menu if it's open
+    mobileMenu.classList.remove('active');
+    hamburger.classList.remove('active');
+
+    // Show category name in a heading
+    const productGridTitle = document.createElement('h2');
+    productGridTitle.className = 'category-title';
+    productGridTitle.textContent = category.name;
+
+    // Insert the title before the product grid
+    const productGrid = document.getElementById('product-grid');
+    if (document.querySelector('.category-title')) {
+        document.querySelector('.category-title').remove();
+    }
+    productGrid.parentNode.insertBefore(productGridTitle, productGrid);
+};
+
+// Function to display products in the product grid
+function displayProducts(productsToDisplay) {
+    const productGrid = document.getElementById('product-grid');
+
+    // Clear existing products
+    productGrid.innerHTML = '';
+
+    // If no products to display
+    if (productsToDisplay.length === 0) {
+        productGrid.innerHTML = '<div class="no-products">No products found in this category.</div>';
+        return;
+    }
+
+    // Add products to grid
+    productsToDisplay.forEach(product => {
+        const productItem = document.createElement('div');
+        productItem.className = 'product-item';
+        productItem.setAttribute('onclick', `showProductDetails('${product.id}')`);
+
+        // Create proper structure for image rotator
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'product-image-container';
+
+        const rotator = document.createElement('div');
+        rotator.className = 'product-image-rotator';
+
+        // Add all product angles to the rotator
+        if (product.angles && product.angles.length > 0) {
+            product.angles.forEach((imgSrc, index) => {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.alt = product.name;
+                img.dataset.index = index;
+
+                // Make the first image active
+                if (index === 0) {
+                    img.classList.add('active');
+                }
+
+                rotator.appendChild(img);
+            });
+        } else {
+            // If no angles, just add the main image
+            const img = document.createElement('img');
+            img.src = product.image;
+            img.alt = product.name;
+            img.classList.add('active');
+            rotator.appendChild(img);
+        }
+
+        imageContainer.appendChild(rotator);
+
+        // Create product info
+        const productInfo = document.createElement('div');
+        productInfo.className = 'product-info';
+        productInfo.innerHTML = `
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">KES ${product.price.toFixed(2)}</div>
+            <div class="product-sales">${product.sales}+ sold</div>
+            <div class="product-stock">In Stock: ${product.quantity}</div>
+        `;
+
+        // Append elements to product item
+        productItem.appendChild(imageContainer);
+        productItem.appendChild(productInfo);
+
+        productGrid.appendChild(productItem);
+    });
+
+    // Initialize image rotators for the newly added products
+    initializeProductImageRotators();
+}
+
+// Function to show all products
+window.showAllProducts = function() {
+    // Update browser history
+    updateHistory('home', 'Home', '#home');
+
+    // Display all products
+    displayProducts(products);
+
+    // Remove category title if exists
+    if (document.querySelector('.category-title')) {
+        document.querySelector('.category-title').remove();
+    }
+
+    // Close any open modals
+    closeAllModals();
 };
 
 // Vendor options
@@ -1036,6 +1341,9 @@ updateCartCount();
 
 // Initialize product image rotators
 initializeProductImageRotators();
+
+// Initialize product display
+displayProducts(products);
 
 // Function to show live stream modal
 window.showLiveStream = function() {
